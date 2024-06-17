@@ -1,9 +1,9 @@
 # cocktail-hour
 Find new cocktails by providing alcohol preference. Ingredients and instructions included.
 
-**Link to project:** http://recruiters-love-seeing-live-demos.com/
+**Link to project:** https://home-cocktail-hour.netlify.app/
 
-![alt tag](http://placecorgi.com/1200/650)
+![home-page](https://github.com/Hailo7ts/cocktail-hour/assets/101282320/9746ccd2-a313-4afc-8a68-5c82e4ef4be0)
 
 ## How It's Made:
 
