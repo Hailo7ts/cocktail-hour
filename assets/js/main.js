@@ -279,6 +279,7 @@ function getIngredients(){
     ingredients.push(slides[i].strIngredient14)
     ingredients.push(slides[i].strIngredient15)
 
+	//filter out any item in array that is null
 	ingredients = ingredients.filter(item => item != null)
 
     return ingredients
@@ -304,6 +305,7 @@ function getMeasurement(){
     measurement.push(slides[i].strMeasure14)
     measurement.push(slides[i].strMeasure15)
 
+	//filter out any item in array that is null
 	measurement = measurement.filter(item => item != null)
 
     return measurement
@@ -316,6 +318,7 @@ function mesurementIngredients(){
 	let ingredients = getIngredients()
 	let measurement = getMeasurement()
 
+	//assemble measurement of ingredients and store in array
 	for(let i=0; i<measurement.length; i++){
 		measurementIngredients[i] = `${measurement[i]} of ${ingredients[i]}`
 	}
