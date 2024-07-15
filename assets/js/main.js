@@ -199,10 +199,104 @@ document.querySelector('.goRight').addEventListener('click', goRight)
 document.querySelector('.goLeft').addEventListener('click', goLeft)
 document.querySelector('.get-drink').addEventListener('click', getDrink)
 
-//global variables for the drinks array, index, user input
-let slides = []
+
+
+//initializing cocktial object
+//setting user input, drink, to empty string on page load
 let drink = ''
-let i = 0
+let cocktail = {}
+
+class Cocktail{
+
+	constructor(drinkName, drinkImage, drinkInstructions, index,
+		drinkArray
+		){
+			this.drinkName = drinkName
+			this.drinkImage = drinkImage
+			this.drinkInstructions = drinkInstructions
+			this.currentSlide = index
+			this.slides = drinkArray
+		}
+
+	//get drink instructions and return string
+	getInstructions(){
+		let i = this.currentSlide
+		return this.slides[i].strInstructions
+	}
+
+
+	//store ingredients in array return array
+	getIngredients(){
+    	//get ingredients
+    	let ingredients = []
+		let i = this.currentSlide
+
+    	ingredients.push(this.slides[i].strIngredient1)
+    	ingredients.push(this.slides[i].strIngredient2)
+    	ingredients.push(this.slides[i].strIngredient3)
+    	ingredients.push(this.slides[i].strIngredient4)
+    	ingredients.push(this.slides[i].strIngredient5)
+    	ingredients.push(this.slides[i].strIngredient6)
+    	ingredients.push(this.slides[i].strIngredient7)
+    	ingredients.push(this.slides[i].strIngredient8)
+    	ingredients.push(this.slides[i].strIngredient9)
+    	ingredients.push(this.slides[i].strIngredient10)
+    	ingredients.push(this.slides[i].strIngredient11)
+    	ingredients.push(this.slides[i].strIngredient12)
+    	ingredients.push(this.slides[i].strIngredient13)
+    	ingredients.push(this.slides[i].strIngredient14)
+    	ingredients.push(this.slides[i].strIngredient15)
+
+		//filter out any item in array that is null
+		ingredients = ingredients.filter(item => item != null)
+
+    	return ingredients
+	}
+
+	//store measurements in array and retrun array
+	getMeasurement(){
+    	//get measurement
+    	let measurement = []
+		let i = this.currentSlide
+		
+    	measurement.push(this.slides[i].strMeasure1)
+    	measurement.push(this.slides[i].strMeasure2)
+    	measurement.push(this.slides[i].strMeasure3)
+    	measurement.push(this.slides[i].strMeasure4)
+    	measurement.push(this.slides[i].strMeasure5)
+    	measurement.push(this.slides[i].strMeasure6)
+    	measurement.push(this.slides[i].strMeasure7)
+    	measurement.push(this.slides[i].strMeasure8)
+    	measurement.push(this.slides[i].strMeasure9)
+    	measurement.push(this.slides[i].strMeasure10)
+    	measurement.push(this.slides[i].strMeasure11)
+    	measurement.push(this.slides[i].strMeasure12)
+    	measurement.push(this.slides[i].strMeasure13)
+    	measurement.push(this.slides[i].strMeasure14)
+    	measurement.push(this.slides[i].strMeasure15)
+
+		//filter out any item in array that is null
+		measurement = measurement.filter(item => item != null)
+
+    	return measurement
+	}
+	
+	//get measurements with ingredients and concat. Return array of strings
+	mesurementIngredients(){
+		let measurementIngredients = []
+		let ingredients = this.getIngredients()
+		let measurement = this.getMeasurement()
+
+		//assemble measurement of ingredients and store in array
+		for(let i=0; i<measurement.length; i++){
+			measurementIngredients[i] = `${measurement[i]} of ${ingredients[i]}`
+		}
+
+		return measurementIngredients
+	}
+
+}
+
 
 //fetch drink based on input from api
 function getDrink(){
@@ -211,16 +305,24 @@ function getDrink(){
     fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${drink}`)
     .then(res => res.json())
     .then(data =>{
-            slides = data.drinks
+            let slides = data.drinks
             console.log(slides) 
 
-            document.querySelector('.drink-name').innerText = slides[i].strDrink
-            document.querySelector('.drink-img').src = slides[i].strDrinkThumb
-            document.querySelector('.instructions').innerText = slides[i].strInstructions
+			//create an instance of Cocktail
+			cocktail = new Cocktail(slides[0].strDrink, slides[0].strDrinkThumb, 
+				slides[0].strInstructions, 0, slides)
+			
 
-            let ingredients = mesurementIngredients()
+			document.querySelector('.drink-name').innerText = cocktail.drinkName
+            document.querySelector('.drink-img').src = cocktail.drinkImage
+            document.querySelector('.instructions').innerText = cocktail.getInstructions()
+			
+
+            let ingredients = cocktail.mesurementIngredients()
 			document.querySelector('.ingredients').innerText = ingredients.join(', ')            
             
+
+			
         })
 
     .catch(err => {
@@ -229,99 +331,58 @@ function getDrink(){
 
 }
 
+
 //move in array of drink to the right
 function goRight(){
+	let slides = cocktail.slides
 
-    if(i < slides.length-1){
-        i += 1
-        document.querySelector('.drink-name').innerText = slides[i].strDrink
-        document.querySelector('.drink-img').src = slides[i].strDrinkThumb
-        document.querySelector('.instructions').innerText = slides[i].strInstructions
-		
-		let ingredients = mesurementIngredients()
-		document.querySelector('.ingredients').innerText = ingredients.join(', ')       
-    }    
+		//check the current slide index to see if it is at the
+		//end of the array
+    	if(cocktail.currentSlide < slides.length-1){
+			//move to the next drink
+        	cocktail.currentSlide += 1
+			let index = cocktail.currentSlide
 
+			//create an instance of Cocktail
+			cocktail = new Cocktail(slides[index].strDrink, 
+			slides[index].strDrinkThumb, 
+			slides[index].strInstructions, 
+			index, slides)
+
+			displayDrink(cocktail)
+    	}    
 }
+
+
 
 //move in array of drink to the left
 function goLeft(){
+	let slides = cocktail.slides
 
-    if(i > 0){
-        i-=1
-		document.querySelector('.drink-name').innerText = slides[i].strDrink
-		document.querySelector('.drink-img').src = slides[i].strDrinkThumb
-		document.querySelector('.instructions').innerText = slides[i].strInstructions
+	//check the current slide index to see if it is at the
+	//end of the array
+    if(cocktail.currentSlide > 0){
+			//move to the next drink
+        	cocktail.currentSlide -= 1
+			let index = cocktail.currentSlide
 
-		let ingredients = mesurementIngredients()
-		document.querySelector('.ingredients').innerText = ingredients.join(', ')
-    }    
+			//create an instance of Cocktail
+			cocktail = new Cocktail(slides[index].strDrink, 
+			slides[index].strDrinkThumb, 
+			slides[index].strInstructions, 
+			index, slides)
 
-}
-
-//store ingredients in array
-function getIngredients(){
-    //get ingredients
-    let ingredients = []
-    ingredients.push(slides[i].strIngredient1)
-    ingredients.push(slides[i].strIngredient2)
-    ingredients.push(slides[i].strIngredient3)
-    ingredients.push(slides[i].strIngredient4)
-    ingredients.push(slides[i].strIngredient5)
-    ingredients.push(slides[i].strIngredient6)
-    ingredients.push(slides[i].strIngredient7)
-    ingredients.push(slides[i].strIngredient8)
-    ingredients.push(slides[i].strIngredient9)
-    ingredients.push(slides[i].strIngredient10)
-    ingredients.push(slides[i].strIngredient11)
-    ingredients.push(slides[i].strIngredient12)
-    ingredients.push(slides[i].strIngredient13)
-    ingredients.push(slides[i].strIngredient14)
-    ingredients.push(slides[i].strIngredient15)
-
-	//filter out any item in array that is null
-	ingredients = ingredients.filter(item => item != null)
-
-    return ingredients
-}
-
-//store measurements in array
-function getMeasurement(){
-    //get measurement
-    let measurement = []
-    measurement.push(slides[i].strMeasure1)
-    measurement.push(slides[i].strMeasure2)
-    measurement.push(slides[i].strMeasure3)
-    measurement.push(slides[i].strMeasure4)
-    measurement.push(slides[i].strMeasure5)
-    measurement.push(slides[i].strMeasure6)
-    measurement.push(slides[i].strMeasure7)
-    measurement.push(slides[i].strMeasure8)
-    measurement.push(slides[i].strMeasure9)
-    measurement.push(slides[i].strMeasure10)
-    measurement.push(slides[i].strMeasure11)
-    measurement.push(slides[i].strMeasure12)
-    measurement.push(slides[i].strMeasure13)
-    measurement.push(slides[i].strMeasure14)
-    measurement.push(slides[i].strMeasure15)
-
-	//filter out any item in array that is null
-	measurement = measurement.filter(item => item != null)
-
-    return measurement
-}
+			displayDrink(cocktail)
+    	}     
+} 
 
 
-//get measurements with ingredients
-function mesurementIngredients(){
-	let measurementIngredients = []
-	let ingredients = getIngredients()
-	let measurement = getMeasurement()
+function displayDrink(drink){
+	
+document.querySelector('.drink-name').innerText = drink.drinkName
+document.querySelector('.drink-img').src = drink.drinkImage
+document.querySelector('.instructions').innerText = drink.getInstructions()
 
-	//assemble measurement of ingredients and store in array
-	for(let i=0; i<measurement.length; i++){
-		measurementIngredients[i] = `${measurement[i]} of ${ingredients[i]}`
-	}
-
-	return measurementIngredients
+let ingredients = drink.mesurementIngredients()
+document.querySelector('.ingredients').innerText = ingredients.join(', ')   
 }
